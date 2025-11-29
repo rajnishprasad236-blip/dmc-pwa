@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Daily Micro-Challenge (PWA Wrapper)</title>
+
+  <!-- PWA manifest & theme -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#6C5CE7" />
+
+  <style>
+    html,body{height:100%;margin:0}
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial}
+    /* iframe fills the screen */
+    #app-frame{
+      border:0;
+      position:fixed;
+      inset:0;
+      width:100%;
+      height:100%;
+    }
+    /* simple fallback notice */
+    #blocked {
+      display:none;
+      position:fixed; inset:0;
+      align-items:center; justify-content:center;
+      background:#f4f5fa; color:#333; padding:24px;
+      text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <!-- iframe loads your Lovable app -->
+  <iframe id="app-frame" src="https://dailymicro-challenge.lovable.app/" title="Daily Micro-Challenge"></iframe>
+
+  <!-- fallback message if embedding blocked -->
+  <div id="blocked">
+    <h2>Embedding blocked</h2>
+    <p>
+      Your app could not be embedded here. This can happen if the site blocks embedding.
+      If you see this message, open this link to use the app:
+    </p>
+    <p><a id="lovable-link" href="https://dailymicro-challenge.lovable.app/" target="_blank">Open Daily Micro-Challenge</a></p>
+    <p>We’ll next try an alternate packaging path (I can help).</p>
+  </div>
+
+  <script>
+    // Detect if the iframe is blocked (X-Frame-Options or CSP)
+    const frame = document.getElementById('app-frame');
+    const blocked = document.getElementById('blocked');
+
+    // If iframe contentWindow is inaccessible shortly after load, assume blocked.
+    frame.addEventListener('load', () => {
+      try {
+        // Accessing location.href will throw DOMException if cross-origin but accessible;
+        // blocked embedding will often make contentWindow null or inaccessible in a different way.
+        const cw = frame.contentWindow;
+        // If frame's document is about:blank (or same-origin redirect), mark blocked
+        if (!cw || cw.location.href === 'about:blank') {
+          throw new Error('iframe not available');
+        }
+        // If loaded OK, do nothing (PWA wrapper works)
+        console.log('iframe loaded — PWA wrapper OK');
+      } catch (err) {
+        console.warn('Iframe probably blocked; showing fallback UI', err);
+        frame.style.display = 'none';
+        blocked.style.display = 'flex';
+      }
+    });
+
+    // register service worker from same origin (GitHub Pages)
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(() => console.log('SW registered (wrapper site)'))
+        .catch(e => console.warn('SW register failed', e));
+    }
+  </script>
+</body>
+</html>
