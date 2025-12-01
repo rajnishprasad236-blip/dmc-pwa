@@ -46,6 +46,13 @@
   </div>
 
   <script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/dmc-pwa/service-worker.js')
+    .then(()=>console.log('SW registered at /dmc-pwa/service-worker.js'))
+    .catch(err=>console.warn('SW register failed', err));
+}
+</script>
+
     // Detect if the iframe is blocked (X-Frame-Options or CSP)
     const frame = document.getElementById('app-frame');
     const blocked = document.getElementById('blocked');
