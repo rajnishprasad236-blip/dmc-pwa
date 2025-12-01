@@ -1,28 +1,38 @@
+// simple app-shell service worker for dmc-pwa wrapper
 const CACHE_NAME = 'dmc-wrapper-shell-v1';
-const CORE = ['/', '/index.html', '/manifest.json', '/icons/icon-192.png', '/icons/icon-512.png'];
+const CORE = [
+  '/dmc-pwa/',
+  '/dmc-pwa/index.html',
+  '/dmc-pwa/manifest.json',
+  '/dmc-pwa/icons/icon-192.png',
+  '/dmc-pwa/icons/icon-512.png'
+];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', (e) => {
-  e.waitUntil(caches.keys().then(keys => Promise.all(keys.map(k => {
-    if (k !== CACHE_NAME) return caches.delete(k);
-  }))).then(() => self.clients.claim()));
+  e.waitUntil(
+    caches.keys().then(keys => Promise.all(keys.map(k => (k !== CACHE_NAME) ? caches.delete(k) : null)))
+      .then(() => self.clients.claim())
+  );
 });
 
 self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return;
   if (e.request.mode === 'navigate') {
-    e.respondWith(fetch(e.request).catch(() => caches.match('/index.html')));
+    e.respondWith(fetch(e.request).catch(() => caches.match('/dmc-pwa/index.html')));
     return;
   }
-  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).then(res => {
-    return caches.open(CACHE_NAME).then(cache => {
-      try { cache.put(e.request, res.clone()); } catch (err) {}
+  e.respondWith(
+    caches.match(e.request).then(r => r || fetch(e.request).then(res => {
+      caches.open(CACHE_NAME).then(cache => {
+        try { cache.put(e.request, res.clone()); } catch (err) {}
+      });
       return res;
-    });
-  }).catch(() => {
-    if (e.request.destination === 'image') return caches.match('/icons/icon-192.png');
-  })));
+    }).catch(() => {
+      if (e.request.destination === 'image') return caches.match('/dmc-pwa/icons/icon-192.png');
+    }))
+  );
 });
