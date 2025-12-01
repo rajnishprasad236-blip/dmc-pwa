@@ -1,6 +1,10 @@
 <!doctype html>
 <html lang="en">
 <head>
+<link rel="manifest" href="/dmc-pwa/manifest.json">
+<meta name="theme-color" content="#6C5CE7">
+<link rel="icon" href="/dmc-pwa/icons/icon-192.png" sizes="192x192">
+
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Daily Micro-Challenge (PWA Wrapper)</title>
@@ -83,5 +87,11 @@ if ('serviceWorker' in navigator) {
         .catch(e => console.warn('SW register failed', e));
     }
   </script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/dmc-pwa/service-worker.js')
+    .then(()=>console.log('SW registered at /dmc-pwa/service-worker.js'))
+    .catch(err=>console.warn('SW register failed', err));
+}
+</script>
 </body>
 </html>
