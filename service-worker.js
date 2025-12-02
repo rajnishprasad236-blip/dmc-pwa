@@ -4,6 +4,7 @@ const CORE = [
   '/dmc-pwa/',
   '/dmc-pwa/index.html',
   '/dmc-pwa/manifest.json',
+  '/dmc-pwa/service-worker.js,
   '/dmc-pwa/icons/icon-192.png',
   '/dmc-pwa/icons/icon-512.png'
 ];
