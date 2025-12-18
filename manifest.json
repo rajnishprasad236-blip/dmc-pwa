@@ -1,21 +1,24 @@
 {
   "name": "Daily Micro-Challenge",
   "short_name": "DMC",
+  "description": "Small habits, big change — one 2–5 minute challenge every day.",
   "start_url": "/dmc-pwa/",
   "scope": "/dmc-pwa/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#4CAF50",
+  "theme_color": "#6A4DF4",
   "icons": [
     {
       "src": "/dmc-pwa/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/dmc-pwa/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
